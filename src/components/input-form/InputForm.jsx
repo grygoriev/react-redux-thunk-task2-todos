@@ -1,6 +1,10 @@
 import styles from './InputForm.module.css';
+import { useContext } from 'react';
+import { AppContext } from '../../context';
 
-export const InputForm = ({ inputTitle, onChangeHandle, requestAddTask, isCreating }) => {
+export const InputForm = () => {
+	const { inputTitle, onChangeHandle, requestAddTask, isCreating } = useContext(AppContext);
+
 	return (
 		<form className={styles.form}>
 			<input

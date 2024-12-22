@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from './App.module.css';
+import { AppContext } from './context.js';
 import {
 	useRequestGetTodos,
 	useRequestAddTask,
@@ -57,59 +58,58 @@ export const App = () => {
 	};
 
 	return (
-		<div className={styles.app}>
-			{isLoading ? (
-				<div className={styles.loader}></div>
-			) : (
-				<div>
-					{todos.length > 0 ? (
-						<>
-							<input
-								type="text"
-								value={searchInput}
-								className={styles.searchInput}
-								onChange={handleValueChange}
-							/>
-							<button
-								onClick={() => setIsSorted(!isSorted)}
-								className={`${styles.sortButton} ${isSorted ? styles.sortButtonActive : ''}`}
-							>
-								Ая
-							</button>
-							{searchedTodos.length > 0 ? (
-								<ul className={styles.todosElements}>
-									{sortedTodos.map(({ id, title }) => (
-										<TodoItem
-											key={id}
-											id={id}
-											title={title}
-											onDelete={handleDeleteTodo}
-											onSave={handleSaveTodo}
-											isUpdating={isUpdating}
-											isDeleting={isDeleting}
-										/>
-									))}
-								</ul>
-							) : (
-								<p>Не найдены задачи</p>
-							)}
-							<InputForm
-								inputTitle={inputTitle}
-								onChangeHandle={onChangeHandle}
-								requestAddTask={requestAddTask}
-								isCreating={isCreating}
-							/>
-						</>
-					) : (
-						<InputForm
-							inputTitle={inputTitle}
-							onChangeHandle={onChangeHandle}
-							requestAddTask={requestAddTask}
-							isCreating={isCreating}
-						/>
-					)}
-				</div>
-			)}
-		</div>
+		<AppContext.Provider
+			value={{
+				inputTitle,
+				onChangeHandle,
+				requestAddTask,
+				isCreating,
+				handleDeleteTodo,
+				handleSaveTodo,
+				isUpdating,
+				isDeleting,
+			}}
+		>
+			<div className={styles.app}>
+				{isLoading ? (
+					<div className={styles.loader}></div>
+				) : (
+					<div>
+						{todos.length > 0 ? (
+							<>
+								<input
+									type="text"
+									value={searchInput}
+									className={styles.searchInput}
+									onChange={handleValueChange}
+								/>
+								<button
+									onClick={() => setIsSorted(!isSorted)}
+									className={`${styles.sortButton} ${isSorted ? styles.sortButtonActive : ''}`}
+								>
+									Ая
+								</button>
+								{searchedTodos.length > 0 ? (
+									<ul className={styles.todosElements}>
+										{sortedTodos.map(({ id, title }) => (
+											<TodoItem
+												key={id}
+												id={id}
+												title={title}
+											/>
+										))}
+									</ul>
+								) : (
+									<p>Не найдены задачи</p>
+								)}
+								<InputForm />
+							</>
+						) : (
+							<InputForm />
+						)}
+					</div>
+				)}
+			</div>
+		</AppContext.Provider>
 	);
 };

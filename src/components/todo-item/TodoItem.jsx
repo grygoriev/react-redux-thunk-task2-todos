@@ -1,13 +1,16 @@
 import styles from './TodoItem.module.css';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AppContext } from '../../context.js';
 
-export const TodoItem = ({ id, title, onDelete, onSave, isUpdating, isDeleting }) => {
+export const TodoItem = ({ id, title }) => {
 	const [editedTitle, setEditedTitle] = useState(title);
 	const [isEditing, setIsEditing] = useState(false);
+	const { handleDeleteTodo, handleSaveTodo, isUpdating, isDeleting } =
+		useContext(AppContext);
 
 	const handleSave = () => {
 		setIsEditing(false);
-		onSave(id, editedTitle);
+		handleSaveTodo(id, editedTitle);
 	};
 
 	const handleCancel = () => {
@@ -19,7 +22,7 @@ export const TodoItem = ({ id, title, onDelete, onSave, isUpdating, isDeleting }
 		setIsEditing(true);
 	};
 
-	const isChanging = isUpdating || isUpdating;
+	const isChanging = isUpdating || isDeleting;
 
 	return (
 		<li className={styles.todoElement} id={id}>
@@ -58,7 +61,7 @@ export const TodoItem = ({ id, title, onDelete, onSave, isUpdating, isDeleting }
 						</button>
 						<button
 							className={styles.deleteButton}
-							onClick={() => onDelete(id)}
+							onClick={() => handleDeleteTodo(id)}
 							disabled={isChanging}
 						>
 							Удалить
