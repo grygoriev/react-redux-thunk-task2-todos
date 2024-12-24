@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { getTodosAsync, setLoading } from '../actions/index.js';
 
 const ULR = 'http://localhost:3005/todos';
 
-export const useRequestUpdateTodo = (refreshTodos) => {
+export const useRequestUpdateTodo = (dispatch) => {
 	const [isUpdating, setIsUpdating] = useState(false);
 
 	const requestUpdateTodo = (id, title) => {
 		setIsUpdating(true);
+		dispatch(setLoading(true));
 
 		fetch(`${ULR}/${id}`, {
 			method: 'PUT',
@@ -14,13 +16,12 @@ export const useRequestUpdateTodo = (refreshTodos) => {
 				'Content-Type': 'application/json; charset=UTF-8',
 			},
 			body: JSON.stringify({
-				title: title
+				title: title,
 			}),
 		})
 			.then((rawResponse) => rawResponse.json())
-			.then((response) => {
-				console.log('Ответ сервера', response);
-				refreshTodos();
+			.then(() => {
+				dispatch(getTodosAsync);
 			})
 			.finally(() => setIsUpdating(false));
 	};

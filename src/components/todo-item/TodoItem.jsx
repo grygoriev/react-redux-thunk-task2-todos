@@ -1,12 +1,23 @@
 import styles from './TodoItem.module.css';
-import { useContext, useState } from 'react';
-import { AppContext } from '../../context.js';
+import { useState } from 'react';
+import { useRequestDeleteTodo, useRequestUpdateTodo } from '../../hooks';
+import { useDispatch } from 'react-redux';
 
 export const TodoItem = ({ id, title }) => {
+	const dispatch = useDispatch();
 	const [editedTitle, setEditedTitle] = useState(title);
 	const [isEditing, setIsEditing] = useState(false);
-	const { handleDeleteTodo, handleSaveTodo, isUpdating, isDeleting } =
-		useContext(AppContext);
+
+	const { isDeleting, requestDeleteTodo } = useRequestDeleteTodo(dispatch);
+	const { isUpdating, requestUpdateTodo } = useRequestUpdateTodo(dispatch);
+
+	const handleDeleteTodo = (id) => {
+		requestDeleteTodo(id);
+	};
+
+	const handleSaveTodo = (id, newTitle) => {
+		requestUpdateTodo(id, newTitle);
+	};
 
 	const handleSave = () => {
 		setIsEditing(false);
@@ -20,6 +31,7 @@ export const TodoItem = ({ id, title }) => {
 
 	const handleEdit = () => {
 		setIsEditing(true);
+		setEditedTitle(title);
 	};
 
 	const isChanging = isUpdating || isDeleting;

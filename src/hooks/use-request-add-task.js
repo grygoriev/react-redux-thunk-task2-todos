@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import { getTodosAsync, setInputTitle, setLoading } from '../actions/index.js';
 
 const ULR = 'http://localhost:3005/todos';
 
-export const useRequestAddTask = (refreshProd, title, setTitle) => {
+export const useRequestAddTask = (title, dispatch) => {
 	const [isCreating, setIsCreating] = useState(true);
 
 	const requestAddTask = () => {
 		setIsCreating(true);
+		dispatch(setLoading(true));
 
 		fetch(ULR, {
 			method: 'POST',
@@ -18,12 +20,11 @@ export const useRequestAddTask = (refreshProd, title, setTitle) => {
 			}),
 		})
 			.then((rawResponse) => rawResponse.json())
-			.then((response) => {
-				console.log('Ответ сервера ', response);
-				refreshProd();
+			.then(() => {
+				dispatch(getTodosAsync);
 			})
 			.finally(() => {
-				setTitle('');
+				dispatch(setInputTitle(''));
 			});
 	};
 
